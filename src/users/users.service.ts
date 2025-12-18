@@ -1,4 +1,4 @@
-import {  ConflictException, Injectable } from '@nestjs/common';
+import {  ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -14,7 +14,7 @@ export class UsersService {
   ){}
 
   async create(createUserDto: CreateUserDto) {
-    const { name, email, password } = createUserDto;
+    const { name, email, password, role } = createUserDto;
 
     const existingUser = await this.findUserByEmail(email);
 
@@ -27,6 +27,7 @@ export class UsersService {
     const user = this.userRepository.create({
       name,
       email,
+      role,
       password: hashedPassword,
     });
 
@@ -35,5 +36,35 @@ export class UsersService {
 
   findUserByEmail(email: string) {
     return this.userRepository.findOne({ where: { email } });
+  }
+
+  findOne(id: string) {
+    return this.userRepository.findOne({ where: { id } });
+  }
+
+  findAll() {
+    return this.userRepository.find();
+  }
+
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    const user = await this.findOne(id);
+    if(!user){
+      throw new NotFoundException('User not found');
+    }
+    if(updateUserDto.password){
+      user.password = await bcrypt.hash(updateUserDto.password, 10);
+    }
+
+    if (updateUserDto.role) {
+      delete updateUserDto.role;
+    }
+
+    Object.assign(user, updateUserDto);
+
+    return this.userRepository.save(user);
+  }
+
+  remove(id: number) {
+    return this.userRepository.delete(id);
   }
 }
