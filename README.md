@@ -48,5 +48,7 @@ npm install pg
 npm i class-transformer
 npm i @types/bcrypt
 npm i @nestjs/jwt
+npm i passport-jwt
+npm i @types/passport-jwt
 ```
 
