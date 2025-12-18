@@ -12,7 +12,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Public } from '../common/decorators';
 import { Roles } from '../common/decorators';
-import { UserRole } from './entities/user.entity';
+import { CurrentUser } from '../common/decorators';
+import { User, UserRole } from './entities/user.entity';
 
 @Controller('users')
 export class UsersController {
@@ -22,6 +23,14 @@ export class UsersController {
   @Post('register')
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
+  }
+
+  @Get('profile')
+  getProfile(@CurrentUser() user: User) {
+    return {
+      message: 'Your profile',
+      user,
+    };
   }
 
   @Roles(UserRole.ADMIN)
