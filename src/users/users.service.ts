@@ -38,11 +38,15 @@ export class UsersService {
     return this.userRepository.findOne({ where: { email } });
   }
 
-  findOne(id: string) {
-    return this.userRepository.findOne({ where: { id } });
+  async findOne(id: string) {
+    const user = await this.userRepository.findOne({ where: { id } });
+    if(!user){
+      throw new NotFoundException('User does not exist');
+    }
+    return user;
   }
 
-  findAll() {
+  async findAll() {
     return this.userRepository.find();
   }
 
@@ -62,7 +66,7 @@ export class UsersService {
     return this.userRepository.save(user);
   }
 
-  remove(id: number) {
+  async remove(id: number) {
     return this.userRepository.delete(id);
   }
 }

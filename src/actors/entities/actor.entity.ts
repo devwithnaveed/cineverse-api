@@ -1,4 +1,4 @@
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Movie } from '../../movies/entities/movie.entity';
 
 @Entity()
@@ -9,10 +9,9 @@ export class Actor {
   @Column()
   name: string;
 
-  @Column({type: 'date',})
+  @Column({ type: 'date' })
   dateOfBirth: Date;
 
   @ManyToMany(() => Movie, (movie) => movie.actors)
-  @JoinTable()
-  movies: Movie[]
+  movies: Movie[];
 }

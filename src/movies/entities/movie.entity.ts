@@ -33,6 +33,5 @@ export class Movie {
   genres: Genre[];
 
   @OneToMany(() => Review, (review) => review.movie)
-  @JoinTable()
-  reviews : Review[];
+  reviews: Review[];
 }
