@@ -6,6 +6,7 @@ import {
   CreateDateColumn,
 } from 'typeorm';
 import { Movie } from '../../movies/entities/movie.entity';
+import { User } from '../../users/entities/user.entity';
 
 @Entity()
 export class Review {
@@ -18,8 +19,8 @@ export class Review {
   @Column({ type: 'text', nullable: true })
   comment: string;
 
-  // @ManyToOne(() => User, (user) => user.reviews, { onDelete: 'CASCADE' })
-  // user: User;
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  user: User;
 
   @ManyToOne(() => Movie, (movie) => movie.reviews, { onDelete: 'CASCADE' })
   movie: Movie;

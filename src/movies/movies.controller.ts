@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/commo
 import { MoviesService } from './movies.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
-import { Roles } from '../common/decorators';
+import { Public, Roles } from '../common/decorators';
 import { UserRole } from '../users/entities/user.entity';
 
 @Controller('movies')
@@ -15,13 +15,13 @@ export class MoviesController {
     return this.moviesService.create(createMovieDto);
   }
 
-  @Roles(UserRole.ADMIN, UserRole.USER)
+  @Public()
   @Get()
   findAll() {
     return this.moviesService.findAll();
   }
 
-  @Roles(UserRole.ADMIN, UserRole.USER)
+  @Public()
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.moviesService.findOne(+id);

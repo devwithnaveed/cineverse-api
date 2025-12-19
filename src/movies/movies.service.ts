@@ -1,9 +1,10 @@
 import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { In, Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Movie } from './entities/movie.entity';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Movie } from './entities/movie.entity';
-import { In, Repository } from 'typeorm';
 import { ActorsService } from '../actors/actors.service';
 import { GenresService } from '../genres/genres.service';
 

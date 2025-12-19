@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { GenresService } from './genres.service';
 import { CreateGenreDto } from './dto/create-genre.dto';
 import { UpdateGenreDto } from './dto/update-genre.dto';
-import { Roles } from '../common/decorators';
+import { Public, Roles } from '../common/decorators';
 import { UserRole } from '../users/entities/user.entity';
 
 @Controller('genres')
@@ -15,13 +15,13 @@ export class GenresController {
     return this.genresService.create(createGenreDto);
   }
 
-  @Roles(UserRole.ADMIN, UserRole.USER)
+  @Public()
   @Get()
   findAll() {
     return this.genresService.findAll();
   }
 
-  @Roles(UserRole.ADMIN, UserRole.USER)
+  @Public()
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.genresService.findOne(+id);
