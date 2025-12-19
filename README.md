@@ -1,10 +1,14 @@
-## Project setup
+# Movies Backend API
+
+NestJS REST API with JWT authentication, role-based access control, caching, and rate limiting.
+
+## Project Setup
 
 ```bash
 $ npm install
 ```
 
-## Compile and run the project
+## Run the Project
 
 ```bash
 # development
@@ -16,11 +20,96 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 ```
+
+---
+
+## Project Structure
+
+```
+src/
+├── common/
+│   ├── decorators/
+│   │   ├── current-user.decorator.ts   # @CurrentUser() - Get logged-in user
+│   │   ├── public.decorator.ts         # @Public() - Skip auth
+│   │   ├── roles.decorator.ts          # @Roles() - Role-based access
+│   │   └── index.ts
+│   ├── guards/
+│   │   ├── jwt-auth.guard.ts           # JWT authentication
+│   │   ├── roles.guard.ts              # Role authorization
+│   │   └── index.ts
+│   ├── middleware/
+│   │   └── logger.middleware.ts        # Request logging
+│   └── strategies/
+│       └── jwt.strategy.ts             # Passport JWT strategy
+│
+├── auth/
+│   ├── dto/
+│   │   └── login.dto.ts
+│   ├── auth.controller.ts
+│   ├── auth.module.ts
+│   └── auth.service.ts
+│
+├── users/
+│   ├── dto/
+│   │   ├── create-user.dto.ts
+│   │   └── update-user.dto.ts
+│   ├── entities/
+│   │   └── user.entity.ts
+│   ├── users.controller.ts
+│   ├── users.module.ts
+│   └── users.service.ts
+│
+├── movies/
+│   ├── dto/
+│   │   ├── create-movie.dto.ts
+│   │   └── update-movie.dto.ts
+│   ├── entities/
+│   │   └── movie.entity.ts
+│   ├── movies.controller.ts
+│   ├── movies.module.ts
+│   └── movies.service.ts
+│
+├── actors/
+│   ├── dto/
+│   │   ├── create-actor.dto.ts
+│   │   └── update-actor.dto.ts
+│   ├── entities/
+│   │   └── actor.entity.ts
+│   ├── actors.controller.ts
+│   ├── actors.module.ts
+│   └── actors.service.ts
+│
+├── genres/
+│   ├── dto/
+│   │   ├── create-genre.dto.ts
+│   │   └── update-genre.dto.ts
+│   ├── entities/
+│   │   └── genre.entity.ts
+│   ├── genres.controller.ts
+│   ├── genres.module.ts
+│   └── genres.service.ts
+│
+├── reviews/
+│   ├── dto/
+│   │   ├── create-review.dto.ts
+│   │   └── update-review.dto.ts
+│   ├── entities/
+│   │   └── review.entity.ts
+│   ├── reviews.controller.ts
+│   ├── reviews.module.ts
+│   └── reviews.service.ts
+│
+├── app.controller.ts
+├── app.module.ts
+├── app.service.ts
+└── main.ts
+```
+
 ---
 
 ## Authentication & Authorization
 
-This project uses JWT-based auth with role-based access control.
+JWT-based auth with role-based access control.
 
 ### Roles
 - `admin` - Full access
@@ -35,93 +124,143 @@ This project uses JWT-based auth with role-based access control.
 
 ## API Endpoints
 
-### Auth (Public)
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/auth/login` | Login and get token |
-| POST | `/users/register` | Register new user |
-
-### Users (Protected)
+### Auth
 | Method | Endpoint | Access | Description |
 |--------|----------|--------|-------------|
+| POST | `/auth/login` | Public | Login and get token |
+
+### Users
+| Method | Endpoint | Access | Description |
+|--------|----------|--------|-------------|
+| POST | `/users/register` | Public | Register new user |
+| GET | `/users/profile` | Auth | Get current user profile |
 | GET | `/users` | Admin | Get all users |
 | GET | `/users/:id` | Admin | Get user by ID |
 | PATCH | `/users/:id` | Admin | Update user |
 | DELETE | `/users/:id` | Admin | Delete user |
 
+### Movies
+| Method | Endpoint | Access | Description |
+|--------|----------|--------|-------------|
+| GET | `/movies` | Public | Get all movies (Cached) |
+| GET | `/movies/:id` | Public | Get movie by ID (Cached) |
+| POST | `/movies` | Auth | Create movie |
+| PATCH | `/movies/:id` | Auth | Update movie |
+| DELETE | `/movies/:id` | Auth | Delete movie |
+
+### Actors
+| Method | Endpoint | Access | Description |
+|--------|----------|--------|-------------|
+| GET | `/actors` | Public | Get all actors (Cached) |
+| GET | `/actors/:id` | Public | Get actor by ID (Cached) |
+| POST | `/actors` | Auth | Create actor |
+| PATCH | `/actors/:id` | Auth | Update actor |
+| DELETE | `/actors/:id` | Admin | Delete actor |
+
+### Genres
+| Method | Endpoint | Access | Description |
+|--------|----------|--------|-------------|
+| GET | `/genres` | Public | Get all genres (Cached) |
+| GET | `/genres/:id` | Public | Get genre by ID (Cached) |
+| POST | `/genres` | Auth | Create genre |
+| PATCH | `/genres/:id` | Auth | Update genre |
+| DELETE | `/genres/:id` | Auth | Delete genre |
+
+### Reviews
+| Method | Endpoint | Access | Description |
+|--------|----------|--------|-------------|
+| GET | `/reviews` | Public | Get all reviews |
+| GET | `/reviews?movieId=1` | Public | Get reviews by movie |
+| GET | `/reviews/:id` | Public | Get review by ID |
+| POST | `/reviews` | Auth | Create review |
+| PATCH | `/reviews/:id` | Owner/Admin | Update review |
+| DELETE | `/reviews/:id` | Owner/Admin | Delete review |
+
 ---
 
-## Usage Examples
+## Advanced Features
 
-### Register
-```bash
-curl -X POST http://localhost:3000/users/register \
-  -H "Content-Type: application/json" \
-  -d '{"name":"Muhammad Naveed","email":"m.naveed@test.com","password":"123456","role": "admin"}'
+### Caching (In-Memory)
+Applied to heavy read endpoints:
+- `GET /movies` - Cached 30 seconds
+- `GET /movies/:id` - Cached 30 seconds
+- `GET /actors` - Cached 30 seconds
+- `GET /actors/:id` - Cached 30 seconds
+- `GET /genres` - Cached 30 seconds
+- `GET /genres/:id` - Cached 30 seconds
+
+**For Redis caching**, update `app.module.ts`:
+```typescript
+CacheModule.register({
+  store: redisStore,
+  host: 'localhost',
+  port: 6379,
+  ttl: 60000,
+})
 ```
 
-### Login
-```bash
-curl -X POST http://localhost:3000/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"m.naveed@test.com","password":"123456"}'
-```
+### Rate Limiting
+Protects API from abuse:
 
-### Access Protected Route
-```bash
-curl http://localhost:3000/users \
-  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+| Endpoint | Limit | Window |
+|----------|-------|--------|
+| `POST /auth/login` | 5 requests | 1 minute |
+| `POST /users/register` | 3 requests | 1 minute |
+| All other routes | 100 requests | 1 minute |
+
+**Error Response** (when limit exceeded):
+```json
+{
+  "statusCode": 429,
+  "message": "ThrottlerException: Too Many Requests"
+}
 ```
 
 ---
 
-## Project Structure
+## Database Configuration
 
-```
-src/
-├── common/
-│   ├── decorators/    # @Public(), @Roles()
-│   ├── guards/        # JwtAuthGuard, RolesGuard
-│   └── strategies/    # JWT Strategy
-├── auth/              # Login logic
-└── users/             # User CRUD
-```
-
----
-
-```to create user module
-// ===== Create User Module with Single Comand
-nest g res users
-// ===== Comands to create only single file
-nest g module users
-nest g controller users
-nest g service users
-```
-
-```aiignore
+```typescript
 TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5435,
-      username: 'postgres',
-      password: 'pass123',
-      database: 'movies',
-      autoLoadEntities: true,
-      synchronize: true,
-    })
+  type: 'postgres',
+  host: 'localhost',
+  port: 5435,
+  username: 'postgres',
+  password: 'pass123',
+  database: 'movies',
+  autoLoadEntities: true,
+  synchronize: true,
+})
 ```
 
-## Commands
-```aiignore
+---
+
+## Dependencies
+
+```bash
 npm i typeorm
 npm i @nestjs/typeorm
 npm i class-validator
-npm install pg
+npm i pg
 npm i class-transformer
-npm i @types/bcrypt
+npm i bcrypt @types/bcrypt
 npm i @nestjs/jwt
-npm i passport-jwt
-npm i @types/passport-jwt
+npm i @nestjs/passport passport passport-jwt @types/passport-jwt
+npm i @nestjs/throttler
+npm i @nestjs/cache-manager cache-manager
+npm i redis cache-manager-redis-store
 ```
 
+---
 
+## NestJS Commands
+
+```bash
+# Create module with CRUD
+nest g res moduleName
+
+# Create individual files
+nest g module moduleName
+nest g controller moduleName
+nest g service moduleName
+```

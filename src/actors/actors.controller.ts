@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseInterceptors,
+} from '@nestjs/common';
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 import { ActorsService } from './actors.service';
 import { CreateActorDto } from './dto/create-actor.dto';
 import { UpdateActorDto } from './dto/update-actor.dto';
@@ -16,12 +26,16 @@ export class ActorsController {
   }
 
   @Public()
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(30000) // Cache for 30 seconds
   @Get()
   findAll() {
     return this.actorsService.findAll();
   }
 
   @Public()
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(30000)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.actorsService.findOne(+id);

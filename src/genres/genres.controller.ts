@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseInterceptors,
+} from '@nestjs/common';
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 import { GenresService } from './genres.service';
 import { CreateGenreDto } from './dto/create-genre.dto';
 import { UpdateGenreDto } from './dto/update-genre.dto';
@@ -16,12 +26,16 @@ export class GenresController {
   }
 
   @Public()
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(30000)
   @Get()
   findAll() {
     return this.genresService.findAll();
   }
 
   @Public()
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(30000)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.genresService.findOne(+id);
