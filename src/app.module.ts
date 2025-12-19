@@ -7,6 +7,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './common/guards';
 import { RolesGuard } from './common/guards';
+import { MoviesModule } from './movies/movies.module';
+import { ActorsModule } from './actors/actors.module';
+import { GenresModule } from './genres/genres.module';
+import { ReviewsModule } from './reviews/reviews.module';
 
 @Module({
   imports: [
@@ -22,6 +26,10 @@ import { RolesGuard } from './common/guards';
       autoLoadEntities: true,
       synchronize: true,
     }),
+    MoviesModule,
+    ActorsModule,
+    GenresModule,
+    ReviewsModule,
   ],
   controllers: [AppController],
   providers: [
