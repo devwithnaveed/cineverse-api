@@ -30,7 +30,7 @@ export class GenresController {
 
   @Roles(UserRole.ADMIN, UserRole.USER)
   @Post()
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth('bearer')
   @ApiOperation({ summary: 'Create a new genre', description: 'Create a new movie genre' })
   @ApiBody({ type: CreateGenreDto })
   @ApiResponse({ status: 201, description: 'Genre successfully created' })
@@ -64,7 +64,7 @@ export class GenresController {
 
   @Roles(UserRole.ADMIN, UserRole.USER)
   @Patch(':id')
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth('bearer')
   @ApiOperation({ summary: 'Update genre', description: 'Update genre details' })
   @ApiParam({ name: 'id', description: 'Genre ID', type: Number })
   @ApiBody({ type: UpdateGenreDto })
@@ -77,7 +77,7 @@ export class GenresController {
 
   @Roles(UserRole.ADMIN, UserRole.USER)
   @Delete(':id')
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth('bearer')
   @ApiOperation({ summary: 'Delete genre', description: 'Delete a genre' })
   @ApiParam({ name: 'id', description: 'Genre ID', type: Number })
   @ApiResponse({ status: 200, description: 'Genre successfully deleted' })

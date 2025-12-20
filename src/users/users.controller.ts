@@ -41,7 +41,7 @@ export class UsersController {
   }
 
   @Get('profile')
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth('bearer')
   @ApiOperation({ summary: 'Get current user profile', description: 'Returns the authenticated user\'s profile' })
   @ApiResponse({ status: 200, description: 'Returns user profile' })
   @ApiResponse({ status: 401, description: 'Unauthorized - JWT token required' })
@@ -54,7 +54,7 @@ export class UsersController {
 
   @Roles(UserRole.ADMIN)
   @Get()
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth('bearer')
   @ApiOperation({ summary: 'Get all users', description: 'Returns list of all users (Admin only)' })
   @ApiResponse({ status: 200, description: 'Returns list of all users' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
@@ -65,7 +65,7 @@ export class UsersController {
 
   @Roles(UserRole.ADMIN)
   @Get(':id')
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth('bearer')
   @ApiOperation({ summary: 'Get user by ID', description: 'Returns a specific user by ID (Admin only)' })
   @ApiParam({ name: 'id', description: 'User ID' })
   @ApiResponse({ status: 200, description: 'Returns the user' })
@@ -78,7 +78,7 @@ export class UsersController {
 
   @Roles(UserRole.ADMIN)
   @Patch(':id')
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth('bearer')
   @ApiOperation({ summary: 'Update user', description: 'Update user details (Admin only)' })
   @ApiParam({ name: 'id', description: 'User ID' })
   @ApiBody({ type: UpdateUserDto })
@@ -92,7 +92,7 @@ export class UsersController {
 
   @Roles(UserRole.ADMIN)
   @Delete(':id')
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth('bearer')
   @ApiOperation({ summary: 'Delete user', description: 'Delete a user (Admin only)' })
   @ApiParam({ name: 'id', description: 'User ID' })
   @ApiResponse({ status: 200, description: 'User successfully deleted' })

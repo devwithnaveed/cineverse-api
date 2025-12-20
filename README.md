@@ -1,6 +1,20 @@
-# Movies Backend API
+# Cineverse Backend API
 
 NestJS REST API with JWT authentication, role-based access control, caching, and rate limiting.
+
+## API Documentation (Swagger)
+
+Interactive API documentation is available at:
+
+```
+http://localhost:3000/api
+```
+
+Features:
+- Browse all endpoints organized by tags
+- View request/response schemas with examples
+- Test endpoints directly from the browser
+- JWT authentication support (click "Authorize" button)
 
 ## Project Setup
 
@@ -249,6 +263,7 @@ npm i @nestjs/passport passport passport-jwt @types/passport-jwt
 npm i @nestjs/throttler
 npm i @nestjs/cache-manager cache-manager
 npm i redis cache-manager-redis-store
+npm i @nestjs/swagger
 ```
 
 ---

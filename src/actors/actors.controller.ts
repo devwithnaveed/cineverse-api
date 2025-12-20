@@ -30,7 +30,7 @@ export class ActorsController {
 
   @Roles(UserRole.ADMIN, UserRole.USER)
   @Post()
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth('bearer')
   @ApiOperation({ summary: 'Create a new actor', description: 'Create a new actor' })
   @ApiBody({ type: CreateActorDto })
   @ApiResponse({ status: 201, description: 'Actor successfully created' })
@@ -64,7 +64,7 @@ export class ActorsController {
 
   @Roles(UserRole.ADMIN, UserRole.USER)
   @Patch(':id')
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth('bearer')
   @ApiOperation({ summary: 'Update actor', description: 'Update actor details' })
   @ApiParam({ name: 'id', description: 'Actor ID', type: Number })
   @ApiBody({ type: UpdateActorDto })
@@ -77,7 +77,7 @@ export class ActorsController {
 
   @Roles(UserRole.ADMIN)
   @Delete(':id')
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth('bearer')
   @ApiOperation({ summary: 'Delete actor', description: 'Delete an actor (Admin only)' })
   @ApiParam({ name: 'id', description: 'Actor ID', type: Number })
   @ApiResponse({ status: 200, description: 'Actor successfully deleted' })

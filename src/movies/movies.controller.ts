@@ -30,7 +30,7 @@ export class MoviesController {
 
   @Roles(UserRole.ADMIN, UserRole.USER)
   @Post()
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth('bearer')
   @ApiOperation({ summary: 'Create a new movie', description: 'Create a new movie with actors and genres' })
   @ApiBody({ type: CreateMovieDto })
   @ApiResponse({ status: 201, description: 'Movie successfully created' })
@@ -64,7 +64,7 @@ export class MoviesController {
 
   @Roles(UserRole.ADMIN, UserRole.USER)
   @Patch(':id')
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth('bearer')
   @ApiOperation({ summary: 'Update movie', description: 'Update movie details' })
   @ApiParam({ name: 'id', description: 'Movie ID', type: Number })
   @ApiBody({ type: UpdateMovieDto })
@@ -77,7 +77,7 @@ export class MoviesController {
 
   @Roles(UserRole.ADMIN, UserRole.USER)
   @Delete(':id')
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth('bearer')
   @ApiOperation({ summary: 'Delete movie', description: 'Delete a movie' })
   @ApiParam({ name: 'id', description: 'Movie ID', type: Number })
   @ApiResponse({ status: 200, description: 'Movie successfully deleted' })

@@ -30,7 +30,7 @@ export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
   @Post()
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth('bearer')
   @ApiOperation({ summary: 'Create a review', description: 'Create a new movie review' })
   @ApiBody({ type: CreateReviewDto })
   @ApiResponse({ status: 201, description: 'Review successfully created' })
@@ -67,7 +67,7 @@ export class ReviewsController {
   }
 
   @Patch(':id')
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth('bearer')
   @ApiOperation({ summary: 'Update review', description: 'Update a review (only owner or admin)' })
   @ApiParam({ name: 'id', description: 'Review ID', type: Number })
   @ApiBody({ type: UpdateReviewDto })
@@ -84,7 +84,7 @@ export class ReviewsController {
   }
 
   @Delete(':id')
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth('bearer')
   @ApiOperation({ summary: 'Delete review', description: 'Delete a review (only owner or admin)' })
   @ApiParam({ name: 'id', description: 'Review ID', type: Number })
   @ApiResponse({ status: 200, description: 'Review successfully deleted' })
