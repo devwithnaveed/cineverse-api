@@ -52,18 +52,25 @@ curl -X DELETE http://localhost:3000/users/1 \
 ## Movies
 
 ```bash
-# Create Movie
+# Create Movie with File Uploads (multipart/form-data)
 curl -X POST http://localhost:3000/movies \
   -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "title":"Cyber Hell: Exposing an Internet Horror",
-    "description":"Anonymous and exploitative, a network of online chat rooms ran rampant with sex crimes. The hunt to take down its operators required guts and tenacity.",
-    "releaseDate":"2022-05-17",
-    "poster":"https://image.tmdb.org/t/p/original//eRlW6yvXHyXPuN0Ea6u6Sc48lGm.jpg",
-    "actorIds":[1,2],
-    "genreIds":[1]
-  }'
+  -F "title=The Matrix" \
+  -F "description=A computer hacker learns about the true nature of reality" \
+  -F "releaseDate=1999-03-31" \
+  -F "actorIds=1,2" \
+  -F "genreIds=1,2" \
+  -F "poster=@/path/to/poster.jpg" \
+  -F "trailer=@/path/to/trailer.mp4"
+
+# Create Movie without files
+curl -X POST http://localhost:3000/movies \
+  -H "Authorization: Bearer $TOKEN" \
+  -F "title=Cyber Hell: Exposing an Internet Horror" \
+  -F "description=Anonymous and exploitative, a network of online chat rooms ran rampant with sex crimes." \
+  -F "releaseDate=2022-05-17" \
+  -F "actorIds=1,2" \
+  -F "genreIds=1"
 
 # Get All Movies (with pagination)
 curl "http://localhost:3000/movies"
@@ -89,13 +96,20 @@ curl "http://localhost:3000/movies?genreId=1&minRating=4&page=1&limit=10"
 # Get Movie by ID (includes average rating)
 curl http://localhost:3000/movies/1
 
-# Update Movie
+# Update Movie with new poster
 curl -X PATCH http://localhost:3000/movies/1 \
   -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"title":"Updated Title","actorIds":[1,2],"genreIds":[1,2]}'
+  -F "title=Updated Title" \
+  -F "poster=@/path/to/new-poster.jpg"
 
-# Delete Movie
+# Update Movie without files
+curl -X PATCH http://localhost:3000/movies/1 \
+  -H "Authorization: Bearer $TOKEN" \
+  -F "title=Updated Title" \
+  -F "actorIds=1,2,3" \
+  -F "genreIds=1,2"
+
+# Delete Movie (also deletes poster/trailer files)
 curl -X DELETE http://localhost:3000/movies/1 \
   -H "Authorization: Bearer $TOKEN"
 ```
@@ -235,4 +249,8 @@ Movies endpoint returns paginated results:
 - Token expires in 1 hour
 - If you get `401 Unauthorized`, login again
 - If you get `403 Forbidden`, you don't have permission (check role)
+- File uploads use `multipart/form-data` (use `-F` flag in curl)
+- Maximum file size: 100MB
+- Poster: accepts image files (jpg, png, gif, etc.)
+- Trailer: accepts video files (mp4, mov, avi, etc.)
 

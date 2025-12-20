@@ -114,6 +114,10 @@ src/
 │   ├── reviews.module.ts
 │   └── reviews.service.ts
 │
+├── uploads/
+│   ├── uploads.module.ts
+│   └── uploads.service.ts
+│
 ├── app.controller.ts
 ├── app.module.ts
 ├── app.service.ts
@@ -159,9 +163,22 @@ JWT-based auth with role-based access control.
 |--------|----------|--------|-------------|
 | GET | `/movies` | Public | Get all movies with search, filter & pagination (Cached) |
 | GET | `/movies/:id` | Public | Get movie by ID with average rating (Cached) |
-| POST | `/movies` | Auth | Create movie |
-| PATCH | `/movies/:id` | Auth | Update movie |
-| DELETE | `/movies/:id` | Auth | Delete movie |
+| POST | `/movies` | Auth | Create movie with poster/trailer upload |
+| PATCH | `/movies/:id` | Auth | Update movie with poster/trailer upload |
+| DELETE | `/movies/:id` | Auth | Delete movie and associated files |
+
+#### File Uploads (Poster & Trailer)
+
+Movies support file uploads for **poster** (image) and **trailer** (video) via `multipart/form-data`.
+
+| Field | Type | Max Size | Allowed Types |
+|-------|------|----------|---------------|
+| `poster` | file | 100MB | Images (jpg, png, gif, etc.) |
+| `trailer` | file | 100MB | Videos (mp4, mov, avi, etc.) |
+
+Files are stored in:
+- Posters: `/uploads/posters/`
+- Trailers: `/uploads/trailers/`
 
 #### Movies Query Parameters
 

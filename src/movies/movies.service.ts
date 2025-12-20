@@ -8,6 +8,7 @@ import { UpdateMovieDto } from './dto/update-movie.dto';
 import { FilterMovieDto } from './dto/filter-movie.dto';
 import { ActorsService } from '../actors/actors.service';
 import { GenresService } from '../genres/genres.service';
+import { UploadsService } from '../uploads/uploads.service';
 
 export interface PaginatedResult<T> {
   data: T[];
@@ -30,6 +31,7 @@ export class MoviesService {
     private readonly actorsService: ActorsService,
     @Inject(forwardRef(() => GenresService))
     private readonly genresService: GenresService,
+    private readonly uploadsService: UploadsService,
   ) {}
 
   private calculateAverageRating(movie: Movie): number {
@@ -40,19 +42,34 @@ export class MoviesService {
     return Math.round((sum / movie.reviews.length) * 10) / 10;
   }
 
-  async create(createMovieDto: CreateMovieDto) {
+  private parseIds(ids: string | number[]): number[] {
+    if (Array.isArray(ids)) {
+      return ids;
+    }
+    return ids.split(',').map((id) => parseInt(id.trim(), 10)).filter((id) => !isNaN(id));
+  }
+
+  async create(createMovieDto: CreateMovieDto, posterPath?: string, trailerPath?: string) {
     const { genreIds, actorIds, ...rest } = createMovieDto;
 
-    const movie = this.movieRepository.create(rest);
-    const actors = await this.actorsService.findActorsByIds(actorIds);
+    const parsedActorIds = this.parseIds(actorIds);
+    const parsedGenreIds = this.parseIds(genreIds);
 
-    if (actors.length !== actorIds.length) {
+    const movie = this.movieRepository.create({
+      ...rest,
+      poster: posterPath || undefined,
+      trailerLink: trailerPath || undefined,
+    });
+
+    const actors = await this.actorsService.findActorsByIds(parsedActorIds);
+
+    if (actors.length !== parsedActorIds.length) {
       throw new NotFoundException(`one or more actors not found`);
     }
 
-    const genres = await this.genresService.findGenresByIds(genreIds);
+    const genres = await this.genresService.findGenresByIds(parsedGenreIds);
 
-    if (genres.length !== genreIds.length) {
+    if (genres.length !== parsedGenreIds.length) {
       throw new NotFoundException(`one or more genres not found`);
     }
 
@@ -140,7 +157,7 @@ export class MoviesService {
     };
   }
 
-  async update(id: number, updateMovieDto: UpdateMovieDto) {
+  async update(id: number, updateMovieDto: UpdateMovieDto, posterPath?: string, trailerPath?: string) {
     const movie = await this.movieRepository.findOne({
       where: { id },
       relations: { actors: true, genres: true },
@@ -153,11 +170,27 @@ export class MoviesService {
     const { genreIds, actorIds, ...rest } = updateMovieDto;
 
     if (actorIds) {
-      movie.actors = await this.actorsService.findActorsByIds(actorIds);
+      const parsedActorIds = this.parseIds(actorIds);
+      movie.actors = await this.actorsService.findActorsByIds(parsedActorIds);
     }
 
     if (genreIds) {
-      movie.genres = await this.genresService.findGenresByIds(genreIds);
+      const parsedGenreIds = this.parseIds(genreIds);
+      movie.genres = await this.genresService.findGenresByIds(parsedGenreIds);
+    }
+
+    if (posterPath) {
+      if (movie.poster) {
+        this.uploadsService.deleteFile(movie.poster);
+      }
+      movie.poster = posterPath;
+    }
+
+    if (trailerPath) {
+      if (movie.trailerLink) {
+        this.uploadsService.deleteFile(movie.trailerLink);
+      }
+      movie.trailerLink = trailerPath;
     }
 
     Object.assign(movie, rest);
@@ -172,6 +205,14 @@ export class MoviesService {
 
     if (!movie) {
       throw new NotFoundException(`Movie with id ${id} not found`);
+    }
+
+    if (movie.poster) {
+      this.uploadsService.deleteFile(movie.poster);
+    }
+
+    if (movie.trailerLink) {
+      this.uploadsService.deleteFile(movie.trailerLink);
     }
 
     return this.movieRepository.remove(movie);

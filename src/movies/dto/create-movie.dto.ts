@@ -1,4 +1,4 @@
-import { ArrayNotEmpty, IsArray, IsDate, IsInt, IsOptional, IsString, IsUrl } from 'class-validator';
+import { IsDate, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
@@ -8,6 +8,7 @@ export class CreateMovieDto {
     example: 'The Matrix',
   })
   @IsString()
+  @IsNotEmpty()
   title: string;
 
   @ApiProperty({
@@ -15,6 +16,7 @@ export class CreateMovieDto {
     example: 'A computer hacker learns about the true nature of reality and his role in the war against its controllers.',
   })
   @IsString()
+  @IsNotEmpty()
   description: string;
 
   @ApiProperty({
@@ -27,38 +29,32 @@ export class CreateMovieDto {
   releaseDate: Date;
 
   @ApiPropertyOptional({
-    description: 'URL or path to the movie poster image',
-    example: '/uploads/posters/matrix-poster.jpg',
+    description: 'Poster image (uploaded via multipart/form-data)',
+    type: 'string',
+    format: 'binary',
   })
   @IsOptional()
-  @IsString()
   poster?: string;
 
   @ApiPropertyOptional({
-    description: 'URL to the movie trailer',
-    example: 'https://www.youtube.com/watch?v=vKQi3bBA1y8',
+    description: 'Trailer video (uploaded via multipart/form-data)',
+    type: 'string',
+    format: 'binary',
   })
   @IsOptional()
-  @IsUrl()
   trailer?: string;
 
   @ApiProperty({
-    description: 'Array of actor IDs associated with the movie',
-    example: [1, 2, 3],
-    type: [Number],
+    description: 'Comma-separated actor IDs or array of actor IDs',
+    example: '1,2,3',
   })
-  @IsArray()
-  @ArrayNotEmpty()
-  @IsInt({ each: true })
-  actorIds: number[];
+  @IsNotEmpty()
+  actorIds: string | number[];
 
   @ApiProperty({
-    description: 'Array of genre IDs associated with the movie',
-    example: [1, 4],
-    type: [Number],
+    description: 'Comma-separated genre IDs or array of genre IDs',
+    example: '1,2',
   })
-  @IsArray()
-  @ArrayNotEmpty()
-  @IsInt({ each: true })
-  genreIds: number[];
+  @IsNotEmpty()
+  genreIds: string | number[];
 }
