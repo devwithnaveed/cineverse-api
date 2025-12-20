@@ -76,7 +76,8 @@ src/
 ├── movies/
 │   ├── dto/
 │   │   ├── create-movie.dto.ts
-│   │   └── update-movie.dto.ts
+│   │   ├── update-movie.dto.ts
+│   │   └── filter-movie.dto.ts      # Search, filter & pagination
 │   ├── entities/
 │   │   └── movie.entity.ts
 │   ├── movies.controller.ts
@@ -156,11 +157,27 @@ JWT-based auth with role-based access control.
 ### Movies
 | Method | Endpoint | Access | Description |
 |--------|----------|--------|-------------|
-| GET | `/movies` | Public | Get all movies (Cached) |
-| GET | `/movies/:id` | Public | Get movie by ID (Cached) |
+| GET | `/movies` | Public | Get all movies with search, filter & pagination (Cached) |
+| GET | `/movies/:id` | Public | Get movie by ID with average rating (Cached) |
 | POST | `/movies` | Auth | Create movie |
 | PATCH | `/movies/:id` | Auth | Update movie |
 | DELETE | `/movies/:id` | Auth | Delete movie |
+
+#### Movies Query Parameters
+
+| Parameter | Type | Description | Example |
+|-----------|------|-------------|---------|
+| `title` | string | Search by title (partial match) | `?title=Matrix` |
+| `genreId` | number | Filter by genre ID | `?genreId=1` |
+| `actorId` | number | Filter by actor ID | `?actorId=1` |
+| `minRating` | number | Minimum average rating (1-5) | `?minRating=4` |
+| `page` | number | Page number (default: 1) | `?page=2` |
+| `limit` | number | Items per page (default: 10, max: 100) | `?limit=20` |
+
+**Example:** Get movies in genre 1 with rating ≥ 4:
+```
+GET /movies?genreId=1&minRating=4&page=1&limit=10
+```
 
 ### Actors
 | Method | Endpoint | Access | Description |

@@ -65,10 +65,28 @@ curl -X POST http://localhost:3000/movies \
     "genreIds":[1]
   }'
 
-# Get All Movies
-curl http://localhost:3000/movies
+# Get All Movies (with pagination)
+curl "http://localhost:3000/movies"
 
-# Get Movie by ID
+# Get Movies - Page 2 with 5 items per page
+curl "http://localhost:3000/movies?page=2&limit=5"
+
+# Search Movies by Title
+curl "http://localhost:3000/movies?title=Matrix"
+
+# Filter Movies by Genre ID
+curl "http://localhost:3000/movies?genreId=1"
+
+# Filter Movies by Actor ID
+curl "http://localhost:3000/movies?actorId=1"
+
+# Filter Movies by Minimum Rating
+curl "http://localhost:3000/movies?minRating=4"
+
+# Combined: Movies in genre 1 with rating >= 4
+curl "http://localhost:3000/movies?genreId=1&minRating=4&page=1&limit=10"
+
+# Get Movie by ID (includes average rating)
 curl http://localhost:3000/movies/1
 
 # Update Movie
@@ -175,6 +193,39 @@ curl -X PATCH http://localhost:3000/reviews/1 \
 # Delete Review (Owner/Admin)
 curl -X DELETE http://localhost:3000/reviews/1 \
   -H "Authorization: Bearer $TOKEN"
+```
+
+---
+
+## Movies Response Format
+
+Movies endpoint returns paginated results:
+
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "title": "The Matrix",
+      "description": "...",
+      "releaseDate": "1999-03-31",
+      "poster": "...",
+      "trailerLink": "...",
+      "averageRating": 4.5,
+      "actors": [...],
+      "genres": [...],
+      "reviews": [...]
+    }
+  ],
+  "meta": {
+    "total": 100,
+    "page": 1,
+    "limit": 10,
+    "totalPages": 10,
+    "hasNextPage": true,
+    "hasPrevPage": false
+  }
+}
 ```
 
 ---
